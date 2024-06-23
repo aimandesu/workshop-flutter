@@ -45,7 +45,7 @@ class BookShelf extends StatelessWidget {
                   child: Text(
                     bookModel.description,
                     style: const TextStyle(
-                      color: Colors.green,
+                      color: Colors.black87,
                     ),
                   ),
                 ),

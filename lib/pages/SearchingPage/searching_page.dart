@@ -40,6 +40,7 @@ class _SearchingPageState extends State<SearchingPage> {
     return Material(
       child: Scaffold(
         appBar: AppBar(
+          leading: const BackButton(color: Colors.black54),
           backgroundColor: Colors.green[100],
         ),
         body: Container(
@@ -64,6 +65,7 @@ class _SearchingPageState extends State<SearchingPage> {
                     hintText: 'Searching',
                     hintStyle: TextStyle(
                       fontSize: 20,
+                      color: Colors.black87,
                     ),
                   ),
                   onChanged: (value) {
@@ -108,6 +110,7 @@ class _SearchingPageState extends State<SearchingPage> {
                                 },
                                 title: Text(
                                   result[index].name.toString(),
+                                  style: const TextStyle(color: Colors.black87),
                                 ),
                               );
                             },

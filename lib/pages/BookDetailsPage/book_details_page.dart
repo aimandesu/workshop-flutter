@@ -121,13 +121,17 @@ class BookDetailsPage extends StatelessWidget {
                                     const Text(
                                       "Descripton",
                                       style: TextStyle(
-                                        color: Colors.green,
+                                        color: Colors.black87,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
+                                    const SizedBox(height: 10),
                                     Text(
                                       bookModel.description,
                                       style: const TextStyle(
-                                        color: Colors.green,
+                                        color: Colors.black87,
+                                        fontSize: 16,
                                       ),
                                     )
                                   ],

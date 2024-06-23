@@ -11,12 +11,15 @@ class CreateUpdateBookPage extends StatefulWidget {
 }
 
 class _CreateUpdateBookPageState extends State<CreateUpdateBookPage> {
+  //controllers
   final TextEditingController isbnController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController authorController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController imageController = TextEditingController();
+
+  //variables
   int? _bookId;
   DateTime createdAt = DateTime.now();
   DateTime? updatedAt;
@@ -63,6 +66,15 @@ class _CreateUpdateBookPageState extends State<CreateUpdateBookPage> {
     super.dispose();
   }
 
+  void clearFields() {
+    isbnController.clear();
+    nameController.clear();
+    yearController.clear();
+    authorController.clear();
+    descriptionController.clear();
+    imageController.clear();
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -76,157 +88,192 @@ class _CreateUpdateBookPageState extends State<CreateUpdateBookPage> {
     }
   }
 
+  void _submitData() {
+    BookModel bookModel = BookModel(
+      id: _bookId,
+      isbn: isbnController.text,
+      name: nameController.text,
+      year: int.parse(yearController.text),
+      author: authorController.text,
+      description: descriptionController.text,
+      image: imageController.text,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+    );
+
+    if (_isEdit) {
+      context.read<DataProvider>().updateBook(bookModel);
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackbarToShow("The book has been updated"),
+      );
+    } else {
+      context.read<DataProvider>().createBook(bookModel);
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackbarToShow("The book suggestion has been created"),
+      );
+      clearFields();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           _isEdit ? 'Update Book' : 'Suggest Books',
         ),
       ),
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: isbnController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'Isbn',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: nameController,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'name',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: yearController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'year',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: authorController,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'author',
-                ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'description',
-                ),
-                maxLines: 4,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.green[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: TextField(
-                textInputAction: TextInputAction.next,
-                controller: imageController,
-                decoration: const InputDecoration.collapsed(
-                  hintText: 'image link',
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: SizedBox(
+            height: size.height * 0.9,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "${createdAt.toLocal()}".split(' ')[0],
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300,
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    textInputAction: TextInputAction.next,
+                    controller: isbnController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'Isbn',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: const Text(
-                    'Select date',
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    textInputAction: TextInputAction.next,
+                    controller: nameController,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'name',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    textInputAction: TextInputAction.next,
+                    controller: yearController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'year',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    textInputAction: TextInputAction.next,
+                    controller: authorController,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'author',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    controller: descriptionController,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'description',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                    maxLines: 4,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    style: const TextStyle(color: Colors.black87),
+                    textInputAction: TextInputAction.next,
+                    controller: imageController,
+                    decoration: const InputDecoration.collapsed(
+                      hintText: 'image link',
+                      hintStyle: TextStyle(
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${createdAt.toLocal()}".split(' ')[0],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => _selectDate(context),
+                      child: const Text(
+                        'Select date',
+                      ),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () => _submitData(),
+                    child: Text(_isEdit ? "Update" : "Create"),
                   ),
                 ),
               ],
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  BookModel bookModel = BookModel(
-                    id: _bookId,
-                    isbn: isbnController.text,
-                    name: nameController.text,
-                    year: int.parse(yearController.text),
-                    author: authorController.text,
-                    description: descriptionController.text,
-                    image: imageController.text,
-                    createdAt: createdAt,
-                    updatedAt: DateTime.now(),
-                  );
-
-                  if (_isEdit) {
-                    context.read<DataProvider>().updateBook(bookModel);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackbarToShow("The book has been updated"),
-                    );
-                  } else {
-                    context.read<DataProvider>().createBook(bookModel);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      snackbarToShow("The book suggestion has been created"),
-                    );
-                  }
-                },
-                child: Text(_isEdit ? "Update" : "Create"),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
