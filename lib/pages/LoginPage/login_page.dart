@@ -21,13 +21,32 @@ class _LoginPageState extends State<LoginPage> {
       TextEditingController(text: "ee11cbb19052e40b07aac0ca060c23ee");
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-  void tryLogin(String usernameOrEmail, String password) {
-    Provider.of<LoginErrorProvider>(context, listen: false)
+  void tryLogin(
+    String usernameOrEmail,
+    String password,
+  ) async {
+    final result = await context
+        .read<LoginErrorProvider>()
         .tryLogin(usernameOrEmail, password);
-    // context.read<LoginErrorProvider>().tryLogin(
-    //       usernameOrEmail,
-    //       password,
-    //     ); //password = ee11cbb19052e40b07aac0ca060c23ee
+
+    if (context.mounted) {
+      if (result is LoginSuccessModel) {
+        Navigator.of(context).pushNamed(
+          RoutePath.homePage,
+        );
+
+        setTokenKey(result);
+        log('login success');
+      } else if (result is LoginErrorModel) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('wrong username or password'),
+          ),
+        );
+
+        log('login error');
+      }
+    }
   }
 
   void setTokenKey(LoginSuccessModel loginSuccessModel) async {
@@ -59,34 +78,6 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context, value, child) {
               // final loginError = value.loginErrorModel;
               // final loginSuccess = value.loginSuccessModel;
-
-              if (value.loginResult is LoginSuccessModel) {
-                //save data to some storage
-                //go to next page
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  Navigator.of(context).pushNamed(
-                    RoutePath.homePage,
-                  );
-                });
-                setTokenKey(value.loginResult as LoginSuccessModel);
-                log('login success');
-              }
-
-              if (value.loginResult is LoginErrorModel) {
-                //fire some dialog
-                WidgetsBinding.instance.addPostFrameCallback(
-                  (_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('wrong username or password'),
-                      ),
-                    );
-                  },
-                );
-
-                log('login error');
-              }
-
               return Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(

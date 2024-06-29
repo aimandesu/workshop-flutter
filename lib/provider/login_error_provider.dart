@@ -16,7 +16,7 @@ class LoginErrorProvider with ChangeNotifier {
   // LoginSuccessModel? get loginSuccessModel => _loginSuccessModel;
   dynamic get loginResult => _loginResult;
 
-  Future<void> tryLogin(String usernameOrEmail, String password) async {
+  Future<dynamic> tryLogin(String usernameOrEmail, String password) async {
     final response = await http.post(
       Uri.parse("$WEB_URL/login.php"),
       body: {
@@ -43,5 +43,6 @@ class LoginErrorProvider with ChangeNotifier {
         log('error: $e');
       }
     }
+    return _loginResult;
   }
 }
