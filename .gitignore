@@ -43,4 +43,4 @@ app.*.map.json
 /android/app/release
 
 # Ignore Files
-lib/provider/config.dart
+# lib/provider/config.dart
